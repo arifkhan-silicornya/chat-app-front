@@ -1,11 +1,14 @@
 {
   "name": "web",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start",
+    "dev": "set PORT=3000 && cross-env NODE_OPTIONS='--inspect' next dev --turbopack",
+    "linux_dev": "PORT=3000 cross-env NODE_OPTIONS='--inspect' next dev  --turbopack",
+    "build": "next build && rm -rf .next/cache",
+    "zip": "powershell -Command \"Compress-Archive -Path .next -DestinationPath .next.zip\"",
+    "start": "PORT=3000 next start",
+    "windows_start": "set PORT=3000 && next start",
     "lint": "eslint"
   },
   "dependencies": {
