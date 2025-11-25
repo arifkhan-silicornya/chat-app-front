@@ -3,14 +3,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
 
   async function register(e) {
     e.preventDefault();
-    const res = await fetch("http://localhost:4000/api/register", {
+    const res = await fetch("http://localhost:3001/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password, firstName }),
@@ -22,7 +22,7 @@ export default function Home() {
 
   async function login(e) {
     e.preventDefault();
-    const res = await fetch("http://localhost:4000/api/login", {
+    const res = await fetch("http://localhost:3001/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -61,7 +61,7 @@ export default function Home() {
         />
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+          className="w-full cursor-pointer bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
         >
           Login
         </button>
@@ -93,7 +93,7 @@ export default function Home() {
         />
         <button
           type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
+          className="w-full cursor-pointer bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
         >
           Register
         </button>

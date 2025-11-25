@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
+import PushNotification from "./PushNotification/PushNotification";
 
 export default function ChatWindow({ roomId = "room_general" }) {
   const router = useRouter();
@@ -10,12 +11,34 @@ export default function ChatWindow({ roomId = "room_general" }) {
   const [user, setUser] = useState(null);
   const socketRef = useRef(null);
 
+  const [notification, setNotification] = useState({
+    title: "",
+    message: "",
+    isVisible: false,
+  });
+
+  // Function to show the notification with new data
+  const triggerNotification = (newTitle, newMessage) => {
+    setNotification({
+      title: newTitle,
+      message: newMessage,
+      isVisible: true,
+    });
+  };
+
+  // Function to handle closing (passed to the component)
+  const handleClose = () => {
+    setNotification((prev) => ({ ...prev, isVisible: false }));
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("chat_token");
     const chat_user = localStorage.getItem("chat_user");
     const user = JSON.parse(chat_user);
+
     setUser(user);
-    const socket = io("http://localhost:4000", { auth: { token } });
+
+    const socket = io("http://localhost:3001", { auth: { token } });
     socketRef.current = socket;
 
     socket.on("connect", () => {
@@ -27,6 +50,9 @@ export default function ChatWindow({ roomId = "room_general" }) {
     });
     socket.on("message", (m) => {
       setMessages((prev) => [...prev, m]);
+      if (user.username !== m.username) {
+        triggerNotification("New Message!", "You have a new unread chat.");
+      }
     });
 
     return () => socket.disconnect();
@@ -104,6 +130,13 @@ export default function ChatWindow({ roomId = "room_general" }) {
           Send
         </button>
       </div>
+
+      <PushNotification
+        title={notification.title}
+        message={notification.message}
+        isVisible={notification.isVisible}
+        onClose={handleClose} // Pass the state update function
+      />
     </div>
   );
 }
